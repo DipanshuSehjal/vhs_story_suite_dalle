@@ -1,0 +1,8 @@
+Done -
+
+1. React and Flask are connected now. They communicate with CORS enabled.
+IN PRODUCTION, I will disable CORS-flask
+
+To-do:
+1. Call AI model to get the output with flask API
+2. Display the image on the webpage
