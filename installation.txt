@@ -1,0 +1,7 @@
+1. Install Pycharm,
+2. Install conda and create conda env
+3. pip install min-dalle
+
+4. Run text_to_image.py
+
+Cloned model repository -> https://huggingface.co/kuprel/min-dalle
