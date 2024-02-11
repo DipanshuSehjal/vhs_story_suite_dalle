@@ -15,9 +15,9 @@ model = MinDalle(
 )
 
 image = model.generate_image(
-    text='living room with white walls and white false ceiling with yellow hanging lights. There is a sofa set in the center',
-    seed=2,
-    grid_size=2,
+    text='Nuclear explosion broccoli',
+    seed=-1,
+    grid_size=4,
     is_seamless=False,
     temperature=1,
     top_k=256,
