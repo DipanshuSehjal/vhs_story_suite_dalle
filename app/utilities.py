@@ -2,6 +2,50 @@ from flask import jsonify
 from zipfile import ZipFile
 from flask import send_file
 import os
+from config import APP_PATH
+
+# Define the path to the static/images directory
+STATIC_IMAGES_DIR = os.path.join(APP_PATH, 'static', 'images')
+ZIP_FOLDER = os.path.join(APP_PATH, 'static', 'zip')
+
+
+def save_image_local(image):
+    save_path = os.path.join(APP_PATH, 'static', 'uploads', 'received.png')
+    image.save(save_path)
+    return 'Image saved successfully', 200
+
+
+def create_zip_and_send():
+    image_paths = [
+        os.path.join(STATIC_IMAGES_DIR, 'a_painting_of_man_waiting_for_hi.png'),
+        os.path.join(STATIC_IMAGES_DIR, 'a_painting_of_man_waiting_for_hi_1.png'),
+        os.path.join(STATIC_IMAGES_DIR, 'a_painting_of_man_waiting_for_hi_2.png'),
+        os.path.join(STATIC_IMAGES_DIR, 'a_painting_of_man_waiting_for_hi_3.png'),
+        os.path.join(STATIC_IMAGES_DIR, 'a_painting_of_man_waiting_for_hi_4.png'),
+        os.path.join(STATIC_IMAGES_DIR, 'a_painting_of_man_waiting_for_hi_5.png'),
+    ]
+    print("Here in the dummy_get_images_zip")
+    print(image_paths)
+
+    zip_file_path = (os.path.join(ZIP_FOLDER, 'images.zip'))
+
+    try:
+        # Check if all image paths exist
+        if all(os.path.exists(image_path) for image_path in image_paths):
+            # Create a temporary ZIP file
+            with ZipFile(zip_file_path, 'w') as zip_file:
+                # Add each image to the ZIP file
+                for image_path in image_paths:
+                    zip_file.write(image_path, os.path.basename(image_path))
+            # Return the ZIP file as a response
+            return send_file(zip_file_path, mimetype='application/zip',
+                             as_attachment=True)
+        else:
+            # Raise an exception if one or more images are not found
+            raise FileNotFoundError("One or more images not found")
+    except Exception as e:
+        # Handle any exceptions and return an appropriate response
+        return f"An error occurred: {str(e)}"
 
 
 def dummy_get_images_zip():
@@ -29,60 +73,6 @@ def dummy_get_images_zip():
                          as_attachment=True)
     else:
         return 'One or more images not found', 404
-
-
-def extract_validate_image_generation_parameters(data):
-    # Get JSON data from the request
-    # Check if JSON data is present
-    if not data:
-        return jsonify({'error': 'No JSON data provided'}), 400
-
-    # Extract parameters from the JSON data
-    steps = data.get('steps')
-    width = data.get('width')
-    height = data.get('height')
-    seed = data.get('seed')
-    cfg_scale = data.get('cfg_scale')
-    samples = data.get('samples')
-    positive_prompt = data.get('positivePrompt')
-    negative_prompt = data.get('negativePrompt')
-
-    # Custom parameters
-    count = data.get('count')
-    style = data.get('style')
-
-
-    # # Print the extracted parameters
-    # print("steps:", steps)
-    # print("width:", width)
-    # print("height:", height)
-    # print("seed:", seed)
-    # print("cfg_scale:", cfg_scale)
-    # print("samples:", samples)
-    # print("positive_prompt:", positive_prompt)
-    # print("negative_prompt:", negative_prompt)
-    # print("count:", count)
-    #
-    #
-    #
-    # print("here")
-    # # Check if required parameters are present
-    # if None in [steps, width, height, seed, cfg_scale, samples, positive_prompt, negative_prompt]:
-    #     raise ValueError('Missing required parameters')
-
-    # Return the extracted parameters
-    return {
-        'steps': steps,
-        'width': width,
-        'height': height,
-        'seed': seed,
-        'cfg_scale': cfg_scale,
-        'samples': samples,
-        'positive_prompt': positive_prompt,
-        'negative_prompt': negative_prompt,
-        'count': count,
-        'style': style
-    }
 
 
 def create_zip(images):

@@ -8,6 +8,7 @@ from flask import Blueprint
 from .image_generation_routes_blueprint import image_generation_routes
 from .chatgpt_routes_blueprint import chatgpt_routes
 
+
 # Create a Blueprint object for your routes
 routes_blueprint = Blueprint('routes', __name__)
 

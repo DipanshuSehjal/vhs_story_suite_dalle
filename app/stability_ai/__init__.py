@@ -1,15 +1,9 @@
-# __init__.py
-from .image_generation_config import ImageGenerationConfig
-# from .text_to_image import TextToImageGenerator
-# from .image_to_image import ImageToImageGenerator
+# stability_ai/__init__.py
 
-API_KEY = ""
+from .text_to_image_generation import TextToImageConfig, TextToImageGenerator, utils as t_2_i_utils
+from .image_to_image_generation import ImageToImageConfig, ImageToImageGenerator, utils as i_2_i_utils
 
-# Define a constant variable for the URL
-TEXT_TO_IMAGE_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
-IMAGE_UPSCALING_API_URL = "https://api.stability.ai/v1/generation/esrgan-v1-x2plus/image-to-image/upscale"
-IMAGE_TO_IMAGE_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/image-to-image"
-MULTI_PROMPTING_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
+__all__ = ['TextToImageConfig', 'TextToImageGenerator', 'ImageToImageConfig', 'ImageToImageGenerator']
 
 # Optionally, you can include package-level documentation
 __doc__ = """
@@ -17,5 +11,5 @@ This is the documentation for the stabl_Ai package.
 """
 
 # Initialization code (if needed)
-print("stable_AI package initialized successfully!")
+print("stability_ai package initialized successfully!")
 

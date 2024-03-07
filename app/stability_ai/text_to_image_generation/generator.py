@@ -1,10 +1,64 @@
+# stability_ai.text_to_image_generation.generator.py
+
 import base64
 import os
 import requests
 from app.utilities import create_zip
-from zipfile import ZipFile
-from flask import send_file
-from app.stability_ai import API_KEY, TEXT_TO_IMAGE_API_URL
+from app.stability_ai.config import API_KEY, TEXT_TO_IMAGE_API_URL
+
+
+class TextToImageConfig:
+    """
+    A class to represent the configuration for text-to-image generation.
+    Attributes:
+        steps (int): The number of steps for generation.
+        width (int): The width of the generated images.
+        height (int): The height of the generated images.
+        seed (int): The seed for random generation.
+        cfg_scale (int): The scale factor for the configuration.
+        samples (int): The number of samples to generate.
+        positive_prompt (str): The positive text prompt.
+        negative_prompt (str): The negative text prompt.
+        count (int): The number of images to generate.
+        style (str): The style of the generated images.
+    """
+
+    def __init__(self, steps=40, width=1024, height=1024, seed=0, cfg_scale=5, samples=1, positive_prompt=None,
+                 negative_prompt=None, count=1, style=None):
+        """
+        Initializes the TextToImageConfig with the provided parameters.
+        Parameters:
+            steps (int): The number of steps for generation.
+            width (int): The width of the generated images.
+            height (int): The height of the generated images.
+            seed (int): The seed for random generation.
+            cfg_scale (int): The scale factor for the configuration.
+            samples (int): The number of samples to generate.
+            positive_prompt (str): The positive text prompt.
+            negative_prompt (str): The negative text prompt.
+            count (int): The number of images to generate.
+            style (str): The style of the generated images.
+        """
+        self.samples = samples
+        self.height = height
+        self.width = width
+        self.steps = steps
+        self.seed = seed
+        self.cfg_scale = cfg_scale
+        self.style = style
+        self.count = count
+        self.positive_prompt = positive_prompt if positive_prompt else "A painting of a cat"
+        self.negative_prompt = negative_prompt if negative_prompt else "blurry, bad"
+        self.text_prompts = [
+            {
+                "text": self.positive_prompt,
+                "weight": 1
+            },
+            {
+                "text": self.negative_prompt,
+                "weight": -1
+            }
+        ]
 
 
 class TextToImageGenerator:
@@ -48,29 +102,6 @@ class TextToImageGenerator:
 
         return True
 
-    def dummy_get_images_zip(self):
-        image_paths = [
-            'images/a_painting_of_man_waiting_for_hi.png',
-            'images/a_painting_of_man_waiting_for_hi_1.png',
-            'images/a_painting_of_man_waiting_for_hi_2.png',
-            'images/a_painting_of_man_waiting_for_hi_3.png',
-            'images/a_painting_of_man_waiting_for_hi_4.png',
-            'images/a_painting_of_man_waiting_for_hi_5.png',
-        ]
-        print("Here1")
-        # Check if all images exist
-        if all(os.path.exists(image_path) for image_path in image_paths):
-            # Create a temporary ZIP file
-            with ZipFile('images.zip', 'w') as zip_file:
-                # Add each image to the ZIP file
-                for image_path in image_paths:
-                    zip_file.write(image_path, os.path.basename(image_path))
-            print("Here2")
-            # Return the ZIP file as a response
-            return send_file('images.zip', mimetype='application/zip',
-                             as_attachment=True)
-        else:
-            return 'One or more images not found', 404
 
     def get_images_as_zip(self, folder_path=None):
         """
@@ -125,19 +156,3 @@ class TextToImageGenerator:
             'images/a_painting_of_man_waiting_for_hi_4.png',
             'images/a_painting_of_man_waiting_for_hi_5.png',
         ]
-
-
-# # Example usage:
-# config = ImageGenerationConfig(
-#     samples=1,
-#     height=1024,
-#     width=1024,
-#     steps=40,
-#     cfg_scale=5,
-#     text_prompts=[
-#         {"text": "A painting of a cat", "weight": 1},
-#         {"text": "blurry, bad", "weight": -1}
-#     ]
-# )
-# generator = TextToImageGenerator(config=config)
-# generator.generate_images()
